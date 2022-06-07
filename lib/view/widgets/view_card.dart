@@ -61,9 +61,26 @@ class ViewCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                         )),
+                        const SizedBox(height:10),
                 Container(
-                  child: TextWidget(
-                      txt: "${time!.day}${time!.hour}:${time!.minute}"),
+                    decoration: BoxDecoration(
+                     
+            border: Border.all(
+              color: Colors.grey.shade300,
+            ),
+            borderRadius: BorderRadius.circular(6),
+          ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Column(
+                      children: [
+                          TextWidget(
+                            txt: "Date :- ${time!.day}/${time!.month}/${time!.year}"),
+                        TextWidget(
+                            txt: "Time :- ${time!.hour}:${time!.minute} ${time!.timeZoneName}"),
+                      ],
+                    ),
+                  ),
                 )
               ],
             ),
