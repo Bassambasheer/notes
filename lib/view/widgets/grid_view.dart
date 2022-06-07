@@ -23,6 +23,7 @@ class GridViewWidget extends StatelessWidget {
           description: data?[index].description,
             id: data?[index].id,
             time: data?[index].createdTime,
+            color: data?[index].color, 
         );
       },
     ));

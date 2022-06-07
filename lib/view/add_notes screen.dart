@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:notez/view/widgets/colors.dart';
+import 'package:notez/view/widgets/colorscard.dart';
 
 import '../core/api/firebase_api.dart';
 import '../core/models/note_model.dart';
 import '../theme/theme.dart';
 import 'home_screen.dart';
-import 'widgets/common_widgets.dart';
 
 class AddNotes extends StatefulWidget {
   const AddNotes(
@@ -13,6 +14,7 @@ class AddNotes extends StatefulWidget {
       this.description,
       this.time,
       this.isedit = false,
+      this.color = 0XFFFFFFFF,
       Key? key})
       : super(key: key);
   final String? title;
@@ -20,6 +22,7 @@ class AddNotes extends StatefulWidget {
   final String? id;
   final DateTime? time;
   final bool isedit;
+  final int color;
 
   @override
   State<AddNotes> createState() => _AddNotesState();
@@ -44,44 +47,47 @@ class _AddNotesState extends State<AddNotes> {
       descriptioncontroller.text = widget.description.toString();
     }
     return Scaffold(
-        bottomNavigationBar: Container(
-            width: double.infinity,
-            height: 40,
-            color: Colors.grey[100],
-            child: BottomAppBar(
-              color: const Color(0xFFFFFFFF),
-              shape: const AutomaticNotchedShape(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(0),
-                  ),
-                ),
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(22),
+        backgroundColor: colorList[currentIndex].color,
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniCenterDocked,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.white,
+          elevation: 10,
+          onPressed: () {},
+          child: const Icon(
+            Icons.done,
+            color: Colors.amber,
+            size: 30,
+          ),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          elevation: 10,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 10,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 50, bottom: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(
+                colorList.length,
+                (index) => GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                    scaffoldColor = colorList[currentIndex].color.value;
+                  },
+                  child: ColorChoiceCard(
+                    isSelected: index == currentIndex ? true : false,
+                    color: colorList[index].color,
                   ),
                 ),
               ),
-              notchMargin: 4.5,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  rowminspace,
-                  const SizedBox(
-                    width: 45,
-                  ),
-                  Text(widget.time == null
-                      ? "Created ${DateTime.now().hour}:${DateTime.now().minute}"
-                      : "Last edited ${widget.time!.hour}:${widget.time!.minute}"),
-                  widget.time != null
-                      ? const SizedBox(
-                          width: 85,
-                        )
-                      : const SizedBox(width: 115),
-                ],
-              ),
-            )),
-        backgroundColor: white,
+            ),
+          ),
+        ),
         appBar: AppBar(
           shadowColor: white,
           backgroundColor: white,
@@ -143,6 +149,7 @@ class _AddNotesState extends State<AddNotes> {
 
   addnote() async {
     Note note = Note(
+        color: scaffoldColor,
         title: titlecontroller.text.trim(),
         description: descriptioncontroller.text.trim(),
         createdTime: DateTime.now());
@@ -156,6 +163,7 @@ class _AddNotesState extends State<AddNotes> {
 
   editNote() async {
     Note note = Note(
+        color: scaffoldColor,
         title: titlecontroller.text.trim(),
         description: descriptioncontroller.text.trim(),
         id: widget.id,
